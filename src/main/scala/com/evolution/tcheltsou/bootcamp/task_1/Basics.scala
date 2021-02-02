@@ -5,11 +5,8 @@ object Basics {
   def gcd(a: Int, b: Int): Option[Int]  = gcdRecursion(a.abs, b.abs)
   def lcm(a: Int, b: Int): Option[Long] =
     gcd(a, b)
-      .map(g => a.toLong * b / g)
-      .flatMap {
-        case 0 => None
-        case v => Some(v.abs)
-      }
+      .map(g => (a.toLong * b / g).abs)
+      .filterNot(_ == 0L)
 
   //https://en.wikipedia.org/wiki/Binary_GCD_algorithm
   private def gcdRecursion(a: Int, b: Int): Option[Int] = (a, b) match {
