@@ -4,4 +4,22 @@ version := "0.1"
 
 scalaVersion := "2.13.4"
 
-libraryDependencies += "org.typelevel" %% "cats-core" % "2.2.0"
+scalacOptions ++= Seq(
+  "-Ymacro-annotations"
+)
+
+val catsVersion = "2.2.0"
+val circeVersion = "0.13.0"
+val scalajVersion = "2.4.2"
+val scalatestVersion = "3.2.2"
+
+libraryDependencies ++= Seq(
+  "org.typelevel" %% "cats-core" % catsVersion,
+  "io.circe" %% "circe-core" % circeVersion,
+  "io.circe" %% "circe-generic" % circeVersion,
+  "io.circe" %% "circe-generic-extras" % circeVersion,
+  "io.circe" %% "circe-parser" % circeVersion,
+  "org.scalaj" %% "scalaj-http" % scalajVersion % Test,
+  "org.scalatest" %% "scalatest" % scalatestVersion % Test,
+)
+
