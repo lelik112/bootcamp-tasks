@@ -10,7 +10,7 @@ object Task0 {
     def apply[A: HashCode]: HashCode[A] = implicitly[HashCode[A]]
   }
 
-  implicit class HashCodeOps[A: HashCode](val x: A) extends AnyVal {
+  implicit class HashCodeOps[A: HashCode](val x: A) {
     def hash: Int = HashCode[A].hash(x)
   }
 
@@ -38,7 +38,7 @@ object Task2 {
 
   implicit val userShow: Show[User] = _.toString + "(fancy one)"
 
-  implicit class ShowOps[A: Show](val value: A) extends AnyVal {
+  implicit class ShowOps[A: Show](val value: A) {
     def show: String = Show[A].show(value)
   }
 }
@@ -61,7 +61,7 @@ object Task3 {
     case _ => Left(s"Can not parse input")
   }
 
-  implicit class ParseOps(val input: String) extends AnyVal {
+  implicit class ParseOps(val input: String) {
     def parse[T: Parse]: Either[Error, T] = Parse[T].parse(input)
   }
 }
@@ -76,7 +76,7 @@ object Task4 {
     def apply[A: Equal]: Equal[A] = implicitly[Equal[A]]
   }
 
-  implicit class EqualOps[A: Equal](val left: A) extends AnyVal {
+  implicit class EqualOps[A: Equal](val left: A) {
     def ===(right: A): Boolean = Equal[A].areEqual(left, right)
   }
 }
@@ -93,7 +93,7 @@ object AdvancedHomework {
     def apply[F[_]: Monad]: Monad[F] = implicitly[Monad[F]]
   }
 
-  implicit class MonadOps[F[_]: Monad, A](val monad: F[A]) extends AnyVal {
+  implicit class MonadOps[F[_]: Monad, A](val monad: F[A]) {
     def id(a: A): F[A] = Monad[F].id(a)
     def flatMap[B](f: A => F[B]): F[B] = Monad[F].flatMap(monad)(f)
     def map[B](f: A => B): F[B] = Monad[F].map(monad)(f)
