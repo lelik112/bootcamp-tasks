@@ -6,7 +6,7 @@ import scala.util.Try
 object EffectsHomework {
   final class IO[A](private val run: () => A) {
     def map[B](f: A => B): IO[B] = IO(f(run()))
-    def flatMap[B](f: A => IO[B]): IO[B] = f(run())
+    def flatMap[B](f: A => IO[B]): IO[B] = IO(f(run()).run())
     def *>[B](another: IO[B]): IO[B] = flatMap(_ => another)
     def as[B](newValue: => B): IO[B] = map(_ => newValue)
     def void: IO[Unit] = map(_ => ())
@@ -21,7 +21,7 @@ object EffectsHomework {
 
   object IO {
     def apply[A](body: => A): IO[A] = delay(body)
-    def suspend[A](thunk: => IO[A]): IO[A] = unit *> thunk
+    def suspend[A](thunk: => IO[A]): IO[A] = thunk
     def delay[A](body: => A): IO[A] = new IO(() => body)
     def pure[A](a: A): IO[A] = IO(a)
     def fromEither[A](e: Either[Throwable, A]): IO[A] = e.fold(raiseError, pure)
