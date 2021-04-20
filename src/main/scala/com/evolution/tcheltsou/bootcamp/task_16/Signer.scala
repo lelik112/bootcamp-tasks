@@ -23,7 +23,7 @@ object Signer {
   def sign[F[_]: Sync: Parallel](content: String, seed: Int): F[Option[Int]] = {
     val words = content.split("\\s").toVector
     val signers: List[(String, Int) => Int] = List(javaHash, knuthHash)
-
+    println(Thread.currentThread().getName)
     signers.parTraverse { f =>
       words.parTraverse(w => Sync[F].pure(f(w, seed))).map(_.minOption)
     }.map(_.sequence.map(_.min))

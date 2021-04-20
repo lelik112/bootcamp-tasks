@@ -20,8 +20,8 @@ class Fun {
       FlatMap(this, bind).handleErrorWith(recover)
     def unsafeRunSync(): A = {
       def loop(current: IO[Any], stack: List[Bind]): A = current match {
-        case Map(io, f)             => loop(io, Bind.F(f.andThen(Pure(_))) :: stack)
-        case FlatMap(io, f)         => loop(io, Bind.F(f) :: stack)
+//        case Map(io, f)             => loop(io, Bind.F(f.andThen(Pure(_))) :: stack)
+//        case FlatMap(io, f)         => loop(io, Bind.F(f) :: stack)
         case HandleErrorWith(io, h) => loop(io, Bind.H(h) :: stack)
         case Delay(body)            => Try(body).fold(e => loop(RaiseError(e), stack), a => loop(Pure(a), stack))
         case Pure(a) =>

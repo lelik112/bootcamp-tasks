@@ -6,16 +6,19 @@ import cats.effect.{Blocker, ContextShift, Sync}
 import cats.implicits._
 
 trait Exerciser[F[_]] {
-  def sign(blocker: Blocker): F[Ref[F, Option[Int]]]
+  def sign: F[Ref[F, Option[Int]]]
 }
 
 object Exerciser {
 
-  def of[F[_]: ContextShift: Sync: Parallel](reader: ConsoleReader[F]): Exerciser[F] =
-    (blocker: Blocker) => for {
-      data <- reader.readFromFile(blocker)
-      seed <- reader.readSeed(blocker)
-      sign <- ContextShift[F].evalOn(blocker.blockingContext)(Signer.sign[F](data, seed))
-      ref <- Ref.of[F, Option[Int]](sign)
-    } yield ref
+  def of[F[_]: ContextShift: Sync: Parallel](reader: ConsoleReader[F]): Exerciser[F] = new Exerciser[F] {
+    override def sign: F[Ref[F, Option[Int]]] =
+      for {
+        data <- reader.readFromFile
+        seed <- reader.readSeed
+        sign <- Signer.sign[F](data, seed)
+        ref  <- Ref.of[F, Option[Int]](sign)
+      } yield ref
+  }
+
 }

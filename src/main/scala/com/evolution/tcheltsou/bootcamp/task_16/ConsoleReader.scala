@@ -6,8 +6,8 @@ import cats.syntax.all._
 import scala.io.Source
 
 trait ConsoleReader[F[_]] {
-  def readFromFile(blocker: Blocker)(implicit cs: ContextShift[F]): F[String]
-  def readSeed(blocker: Blocker)(implicit cs: ContextShift[F]): F[Int]
+  def readFromFile: F[String]
+  def readSeed: F[Int]
 }
 
 object ConsoleReader {
@@ -24,12 +24,12 @@ object ConsoleReader {
             .handleErrorWith(e => console.putStr(e.getMessage + "\nPlease try again") >> fromConsole(reader, name))
         } yield result
 
-      override def readFromFile(blocker: Blocker)(implicit cs: ContextShift[F]): F[String] =
+      override def readFromFile: F[String] =
         Resource
-          .fromAutoCloseableBlocking(blocker)(fromConsole(Source.fromFile(_), "file path"))
+          .fromAutoCloseable({println(Thread.currentThread().getName);fromConsole(Source.fromFile(_), "file path")})
           .use(src => Sync[F].delay(src.mkString))
 
-      override def readSeed(blocker: Blocker)(implicit cs: ContextShift[F]): F[Int] = fromConsole(_.toInt, "seed")
+      override def readSeed: F[Int] = {println(Thread.currentThread().getName);fromConsole(_.toInt, "seed")}
 
     }.pure
 }
